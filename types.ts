@@ -2,6 +2,8 @@ export type ViewType = 'agentes' | 'conteudo' | 'comunidade' | 'admin';
 
 export type AgentType = 'generator' | 'videoGenerator' | 'promptSpecialist' | 'imageReplicator';
 
+export type Theme = 'light' | 'dark' | 'system';
+
 export interface Video {
   id: number;
   title: string;
@@ -17,6 +19,8 @@ export interface User {
   avatar: string;
   role: 'user' | 'admin';
   online?: boolean;
+  warned?: boolean;
+  canPost?: boolean;
 }
 
 export interface ChatMessage {
@@ -40,8 +44,17 @@ export interface ChatHistory {
   messages: ChatMessage[];
 }
 
+export interface Comment {
+    id: number;
+    author: string;
+    avatar: string;
+    content: string;
+    time: string;
+}
+
 export interface Post {
     id: number;
+    title: string;
     author: string;
     content: string;
     imageUrls?: string[];
@@ -50,4 +63,11 @@ export interface Post {
     likes: number;
     liked: boolean;
     pinned?: boolean;
+    comments?: Comment[];
+}
+
+export interface SelectedCourseData {
+  video: Video;
+  playlist: Video[];
+  courseTitle: string;
 }

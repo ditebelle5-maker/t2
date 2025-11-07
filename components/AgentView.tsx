@@ -37,36 +37,36 @@ interface Agent {
 const agents: Agent[] = [
     { 
         id: 'chat',
-        title: "Chat com Gemini", 
-        description: "Converse com um agente de IA para tirar dúvidas, gerar ideias e muito mais.",
+        title: "GPT5", 
+        description: "Converse com o GPT-5, o mais novo modelo de linguagem da OpenAI, para tirar dúvidas, gerar ideias e muito mais.",
         icon: ChatBubbleIcon,
         component: GeminiChatAgent
     },
     {
         id: 'imageReplicator',
-        title: "Analisador de Imagem",
-        description: "Envie uma imagem e receba um prompt detalhado para recriá-la ou inspirar novas criações.",
+        title: "Analisador de Imagem (Vision)",
+        description: "Envie uma imagem e use o GPT-4 com Vision para analisá-la e gerar prompts para recriação.",
         icon: ReplicateIcon,
         component: ImageReplicatorAgent
     },
     { 
         id: 'generator',
-        title: "Gerador de Criativos", 
-        description: "Crie ou edite imagens a partir de texto usando o modelo Nano Banana.",
+        title: "Gerador de Imagem", 
+        description: "Crie e edite imagens realistas a partir de texto usando o modelo DALL-E 3 da OpenAI.",
         icon: SparklesIcon,
         component: ImageGenerationAgent
     },
     {
         id: 'videoGenerator',
         title: "Gerador de Vídeo",
-        description: "Crie vídeos de alta qualidade a partir de texto usando os modelos Veo e Sora.",
+        description: "Crie vídeos de alta qualidade a partir de texto usando o modelo SORA da OpenAI.",
         icon: VideoCameraIcon,
         component: VideoGenerationAgent
     },
     {
         id: 'promptSpecialist',
         title: "Especialista em Prompt",
-        description: "Transforme ideias simples em prompts detalhados para gerar imagens e vídeos incríveis.",
+        description: "Use o poder do GPT-4 para transformar ideias simples em prompts detalhados para DALL-E e SORA.",
         icon: LightbulbIcon,
         component: PromptSpecialistAgent
     }
@@ -75,15 +75,15 @@ const agents: Agent[] = [
 const AgentCard: React.FC<{ agent: Agent; onSelect: () => void }> = ({ agent, onSelect }) => (
     <div 
         onClick={onSelect}
-        className="bg-zinc-900 p-6 rounded-xl hover:bg-zinc-800 transition-all duration-300 cursor-pointer border border-zinc-800"
+        className="bg-white dark:bg-zinc-950 p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all duration-300 cursor-pointer border border-gray-200 dark:border-zinc-800"
     >
         <div className="flex items-center mb-4">
-            <div className="p-2 bg-zinc-800 rounded-lg">
-                <agent.icon className="w-6 h-6 text-gray-300" />
+            <div className="p-2 bg-gray-100 dark:bg-zinc-800 rounded-lg">
+                <agent.icon className="w-6 h-6 text-gray-600 dark:text-zinc-300" />
             </div>
-            <h3 className="ml-4 text-lg font-semibold text-gray-100">{agent.title}</h3>
+            <h3 className="ml-4 text-lg font-semibold text-gray-900 dark:text-zinc-100">{agent.title}</h3>
         </div>
-        <p className="text-gray-400 text-sm">{agent.description}</p>
+        <p className="text-gray-500 dark:text-zinc-400 text-sm">{agent.description}</p>
     </div>
 );
 
@@ -106,7 +106,7 @@ const AgentView: React.FC<AgentViewProps> = (props) => {
 
     return (
         <div className="space-y-8 animate-fade-in">
-            <h2 className="text-3xl font-bold tracking-tight text-white">Agentes de IA</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Agentes de IA</h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {agents.map(agent => (
                     <AgentCard key={agent.id} agent={agent} onSelect={() => handleSelectAgent(agent.id)} />
