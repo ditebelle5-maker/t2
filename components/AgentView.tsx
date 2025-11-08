@@ -1,30 +1,22 @@
 import React, { useState } from 'react';
-import { ChatBubbleIcon, SparklesIcon, ArrowLeftIcon, LightbulbIcon, VideoCameraIcon, ReplicateIcon } from './icons';
+import { ChatBubbleIcon, SparklesIcon, ArrowLeftIcon, LightbulbIcon, ReplicateIcon, MagicWandIcon } from './icons';
 import GeminiChatAgent from './agents/GeminiChatAgent';
 import ImageGenerationAgent from './agents/ImageGenerationAgent';
 import PromptSpecialistAgent from './agents/PromptSpecialistAgent';
-import VideoGenerationAgent from './agents/VideoGenerationAgent';
 import ImageReplicatorAgent from './agents/ImageReplicatorAgent';
+import VideoWatermarkRemoverAgent from './agents/VideoWatermarkRemoverAgent';
 import type { HistoryItem, AgentType as AgentId, ChatHistory } from '../types';
 
 interface AgentViewProps {
   history: HistoryItem[];
   addToHistory: (item: Omit<HistoryItem, 'id' | 'timestamp'>) => void;
   deleteHistoryItem: (id: number) => void;
-  clearAgentHistory: (agentType: AgentId) => void;
+  clearAgentHistory: (agentId: AgentId) => void;
   chatHistories: ChatHistory[];
   saveChatHistory: (chat: ChatHistory) => void;
   deleteChatHistory: (id: number) => void;
   clearAllChatHistory: () => void;
 }
-
-type AgentComponentProps = {
-    onBack: () => void;
-    history: HistoryItem[];
-    addToHistory: (item: Omit<HistoryItem, 'id' | 'timestamp'>) => void;
-    deleteHistoryItem: (id: number) => void;
-    clearAgentHistory: (agentType: AgentId) => void;
-};
 
 interface Agent {
     id: AgentId | 'chat';
@@ -38,35 +30,35 @@ const agents: Agent[] = [
     { 
         id: 'chat',
         title: "GPT5", 
-        description: "Converse com o GPT-5, o mais novo modelo de linguagem da OpenAI, para tirar dúvidas, gerar ideias e muito mais.",
+        description: "Converse com um modelo de linguagem avançado para tirar dúvidas, gerar ideias e muito mais.",
         icon: ChatBubbleIcon,
         component: GeminiChatAgent
-    },
-    {
-        id: 'imageReplicator',
-        title: "Analisador de Imagem (Vision)",
-        description: "Envie uma imagem e use o GPT-4 com Vision para analisá-la e gerar prompts para recriação.",
-        icon: ReplicateIcon,
-        component: ImageReplicatorAgent
     },
     { 
         id: 'generator',
         title: "Gerador de Imagem", 
-        description: "Crie e edite imagens realistas a partir de texto usando o modelo DALL-E 3 da OpenAI.",
+        description: "Crie e edite imagens realistas a partir de texto usando modelos de difusão de última geração.",
         icon: SparklesIcon,
         component: ImageGenerationAgent
     },
     {
-        id: 'videoGenerator',
-        title: "Gerador de Vídeo",
-        description: "Crie vídeos de alta qualidade a partir de texto usando o modelo SORA da OpenAI.",
-        icon: VideoCameraIcon,
-        component: VideoGenerationAgent
+        id: 'watermarkRemover',
+        title: "Removedor de Marca D'água",
+        description: "Envie um vídeo e a IA tentará remover a marca d'água de forma inteligente e preservar a qualidade.",
+        icon: MagicWandIcon,
+        component: VideoWatermarkRemoverAgent
+    },
+    {
+        id: 'imageReplicator',
+        title: "Analisador de Imagem (Vision)",
+        description: "Envie uma imagem e use IA para analisá-la e gerar prompts detalhados para recriação.",
+        icon: ReplicateIcon,
+        component: ImageReplicatorAgent
     },
     {
         id: 'promptSpecialist',
         title: "Especialista em Prompt",
-        description: "Use o poder do GPT-4 para transformar ideias simples em prompts detalhados para DALL-E e SORA.",
+        description: "Transforme ideias simples em prompts detalhados e eficazes para modelos de imagem e vídeo.",
         icon: LightbulbIcon,
         component: PromptSpecialistAgent
     }
@@ -75,15 +67,18 @@ const agents: Agent[] = [
 const AgentCard: React.FC<{ agent: Agent; onSelect: () => void }> = ({ agent, onSelect }) => (
     <div 
         onClick={onSelect}
-        className="bg-white dark:bg-zinc-950 p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all duration-300 cursor-pointer border border-gray-200 dark:border-zinc-800"
+        className="group relative bg-zinc-900 p-6 rounded-xl hover:bg-zinc-800/80 transition-all duration-300 cursor-pointer border border-zinc-800 hover:border-zinc-700"
     >
-        <div className="flex items-center mb-4">
-            <div className="p-2 bg-gray-100 dark:bg-zinc-800 rounded-lg">
-                <agent.icon className="w-6 h-6 text-gray-600 dark:text-zinc-300" />
-            </div>
-            <h3 className="ml-4 text-lg font-semibold text-gray-900 dark:text-zinc-100">{agent.title}</h3>
+        <div className="absolute top-4 right-4 px-2.5 py-1 text-xs font-bold tracking-wider text-green-300 bg-green-900/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-fade-in-up-fast pointer-events-none">
+            FEITO
         </div>
-        <p className="text-gray-500 dark:text-zinc-400 text-sm">{agent.description}</p>
+        <div className="flex items-center mb-4">
+            <div className="p-2 bg-zinc-800 rounded-lg">
+                <agent.icon className="w-6 h-6 text-zinc-300" />
+            </div>
+            <h3 className="ml-4 text-lg font-semibold text-zinc-100">{agent.title}</h3>
+        </div>
+        <p className="text-zinc-300 text-sm">{agent.description}</p>
     </div>
 );
 
@@ -106,7 +101,10 @@ const AgentView: React.FC<AgentViewProps> = (props) => {
 
     return (
         <div className="space-y-8 animate-fade-in">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Agentes de IA</h2>
+             <div className="mb-8">
+                <h2 className="text-3xl font-bold tracking-tight text-white">Central de Agentes de IA</h2>
+                <p className="mt-2 text-lg text-zinc-300">Suas ferramentas criativas para acelerar a produção de conteúdo.</p>
+            </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {agents.map(agent => (
                     <AgentCard key={agent.id} agent={agent} onSelect={() => handleSelectAgent(agent.id)} />

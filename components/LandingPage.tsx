@@ -6,12 +6,12 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
   return (
-    <main className="w-full bg-black text-gray-100">
+    <main className="w-full text-gray-100 dark-bg-grid aurora-bg">
       {/* Hero Section */}
-      <section className="relative min-h-screen w-full flex items-center justify-center text-center overflow-hidden dark-bg-grid aurora-bg">
+      <section className="relative min-h-screen w-full flex items-center justify-center text-center overflow-hidden">
         <div className="relative z-10 p-6">
           <div className="mb-6 animate-fade-in-from-bottom">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 uppercase">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-500 uppercase">
                   R4 Academy
               </h2>
           </div>
@@ -27,7 +27,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
           <div className="mt-10 animate-fade-in-from-bottom animation-delay-600">
             <button
               onClick={onEnter}
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:ring-opacity-50"
+              className="px-8 py-4 bg-white text-black font-semibold rounded-lg shadow-lg hover:shadow-white/20 transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
             >
               Acessar a Plataforma
             </button>

@@ -45,7 +45,6 @@ const GeminiChatAgent: React.FC<AgentProps> = ({
         const selected = chatHistories.find(c => c.id === id);
         if (selected) {
             setCurrentChat(selected);
-            // TODO: Substituir pela API de Chat Completions da OpenAI (GPT-5)
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
             chatRef.current = ai.chats.create({
                 model: 'gemini-2.5-flash',
@@ -78,7 +77,6 @@ const GeminiChatAgent: React.FC<AgentProps> = ({
         
         try {
             if (!chatRef.current) {
-                // TODO: Substituir pela API de Chat Completions da OpenAI (GPT-5)
                 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
                 chatRef.current = ai.chats.create({ model: 'gemini-2.5-flash' });
             }
@@ -120,57 +118,80 @@ const GeminiChatAgent: React.FC<AgentProps> = ({
     };
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex items-center mb-4">
-                <button onClick={onBack} className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-900 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-blue-500">
-                    <ArrowLeftIcon className="w-5 h-5 mr-2" />
+        <div className="flex flex-col bg-zinc-900 rounded-xl border border-zinc-800 shadow-sm animate-fade-in" style={{ height: 'calc(100vh - 8rem)' }}>
+            <div className="flex items-center p-3 border-b border-zinc-800 shrink-0">
+                <button 
+                    onClick={onBack} 
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-200 bg-zinc-800 rounded-md hover:bg-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                    <ArrowLeftIcon className="w-4 h-4" />
                     Voltar
                 </button>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white ml-4">GPT5</h2>
+                <h1 className="text-lg font-bold text-white ml-4">GPT5</h1>
             </div>
-             <div className="flex gap-8 mt-4" style={{ height: 'calc(100vh - 12rem)' }}>
-                <ChatHistorySidebar
-                    histories={chatHistories}
-                    onSelect={handleSelectChat}
-                    onDelete={deleteChatHistory}
-                    onClear={clearAllChatHistory}
-                    onNew={handleNewChat}
-                    selectedId={currentChat?.id || null}
-                />
-                <div className="flex-grow flex flex-col">
-                    <div className="flex-1 overflow-y-auto bg-white dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl p-4 space-y-4">
+
+            <div className="flex flex-1 overflow-hidden">
+                <div className="w-1/4 max-w-xs border-r border-zinc-800">
+                    <ChatHistorySidebar
+                        histories={chatHistories}
+                        onSelect={handleSelectChat}
+                        onDelete={deleteChatHistory}
+                        onClear={clearAllChatHistory}
+                        onNew={handleNewChat}
+                        selectedId={currentChat?.id || null}
+                    />
+                </div>
+
+                <div className="flex-1 flex flex-col bg-transparent">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                        {messages.length === 0 && !isLoading && (
+                            <div className="flex h-full items-center justify-center text-center text-zinc-400">
+                                <div className="p-4">
+                                    <div className="mx-auto w-16 h-16 rounded-full bg-zinc-700 mb-4"></div>
+                                    <h2 className="text-2xl font-bold text-zinc-200">GPT5</h2>
+                                    <p className="mt-2">Como posso ajudar hoje?</p>
+                                </div>
+                            </div>
+                        )}
                         {messages.map((msg, index) => (
-                            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-lg px-4 py-2 rounded-2xl ${msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-200'}`}>
-                                    <p className="whitespace-pre-wrap">{msg.parts[0].text}</p>
+                            <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                {msg.role === 'model' && <div className="w-8 h-8 rounded-full bg-zinc-700 shrink-0"></div>}
+                                <div className={`max-w-xl px-4 py-2.5 rounded-2xl ${msg.role === 'user' ? 'bg-zinc-700 text-white rounded-br-lg' : 'bg-zinc-800 text-zinc-200 rounded-bl-lg'}`}>
+                                    <p className="whitespace-pre-wrap text-sm">{msg.parts[0].text}</p>
                                 </div>
                             </div>
                         ))}
                         {isLoading && messages[messages.length-1]?.role === 'user' && (
-                            <div className="flex justify-start">
-                                <div className="max-w-lg px-4 py-3 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-200">
+                             <div className="flex items-start gap-3 justify-start">
+                                <div className="w-8 h-8 rounded-full bg-zinc-700 shrink-0"></div>
+                                <div className="max-w-lg px-4 py-2.5 rounded-2xl bg-zinc-800 text-zinc-200">
                                     <span className="animate-pulse">...</span>
                                 </div>
                             </div>
                         )}
                         <div ref={messagesEndRef} />
                     </div>
-                    {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
-                    <div className="mt-4">
-                        <div className="relative">
-                            <input
-                                type="text"
+                    {error && <p className="text-red-500 text-sm text-center px-6 pb-2">{error}</p>}
+                    <div className="p-4 border-t border-zinc-800">
+                         <div className="relative">
+                            <textarea
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
-                                onKeyPress={e => e.key === 'Enter' && handleSend()}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSend();
+                                    }
+                                }}
                                 placeholder="Digite sua mensagem..."
-                                className="w-full bg-gray-100 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-full pl-4 pr-12 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-4 pr-12 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white transition resize-none"
+                                rows={1}
                                 disabled={isLoading}
                             />
                             <button 
                                 onClick={handleSend}
                                 disabled={isLoading || !input.trim()}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-200 dark:disabled:bg-zinc-800 disabled:text-gray-400 dark:disabled:text-zinc-500 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-zinc-700 text-zinc-300 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-white"
                                 aria-label="Enviar mensagem"
                             >
                                 <SendIcon className="w-5 h-5" />

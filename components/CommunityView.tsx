@@ -1,101 +1,44 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DiscordIcon } from './icons';
-import type { User, Post, Comment } from '../types';
-import NewPostModal from './NewPostModal';
-import PostCard from './PostCard';
 
-const AnnouncementItem: React.FC<{ post: Post }> = ({ post }) => (
-    <div className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors cursor-pointer">
-        <p className="font-semibold text-sm text-gray-800 dark:text-zinc-200 truncate">{post.title}</p>
-        <div className="flex justify-between items-center mt-1">
-            <p className="text-xs text-gray-500 dark:text-zinc-400">{post.author}</p>
-            <p className="text-xs text-gray-400 dark:text-zinc-500">{post.time}</p>
-        </div>
-    </div>
-);
-
-
-interface CommunityViewProps {
-    user: User;
-    posts: Post[];
-    handleLikeToggle: (postId: number) => void;
-    handlePinToggle: (postId: number) => void;
-    allUsers: User[];
-    onCreatePost: (postData: { title: string; content: string; imageUrls?: string[] }) => void;
-    onCreateComment: (postId: number, content: string) => void;
-}
-
-const CommunityView: React.FC<CommunityViewProps> = ({ user, posts, handleLikeToggle, handlePinToggle, allUsers, onCreatePost, onCreateComment }) => {
-    const [isNewPostModalOpen, setIsNewPostModalOpen] = useState(false);
-    const adminNames = allUsers.filter(u => u.role === 'admin').map(u => u.name);
-    const announcements = posts.filter(post => adminNames.includes(post.author));
-
-
+const CommunityView: React.FC = () => {
   return (
-    <div className="animate-fade-in">
-        <div className="flex justify-between items-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Comunidade</h2>
-        </div>
+    <div className="animate-fade-in h-full flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-indigo-500/10 rounded-full filter blur-3xl animate-pulse"></div>
+      <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-emerald-500/10 rounded-full filter blur-3xl animate-pulse animation-delay-400"></div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-            <div className="lg:col-span-2 space-y-6">
-                {user.canPost && (
-                    <div className="bg-white dark:bg-zinc-950 p-4 rounded-xl border border-gray-200 dark:border-zinc-800 flex items-center gap-4">
-                        <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
-                        <button
-                            onClick={() => setIsNewPostModalOpen(true)}
-                            className="w-full text-left bg-gray-100 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-lg px-4 py-2.5 text-gray-500 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-zinc-800 hover:border-gray-400 dark:hover:border-zinc-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500"
-                        >
-                            Crie um novo post...
-                        </button>
-                    </div>
-                )}
-                {posts.map(post => (
-                    <PostCard 
-                        key={post.id}
-                        post={post}
-                        onLikeToggle={handleLikeToggle}
-                        onPinToggle={handlePinToggle}
-                        onCreateComment={onCreateComment}
-                        currentUser={user}
-                    />
-                ))}
+      <div className="relative z-10 w-full max-w-2xl text-center">
+        <a 
+          href="https://discord.gg/example"
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="group block w-full p-8 sm:p-12 bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 rounded-3xl transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900/70 hover:shadow-2xl hover:shadow-indigo-500/10"
+        >
+          <div className="flex flex-col items-center">
+            <div className="mb-6 p-5 bg-zinc-800/50 rounded-full border border-zinc-700/80 transition-transform duration-300 group-hover:scale-110">
+              <DiscordIcon className="w-16 h-16 text-[#5865F2]" />
             </div>
-            <aside className="lg:col-span-1">
-                <div className="bg-white dark:bg-zinc-950 p-5 rounded-xl border border-gray-200 dark:border-zinc-800 space-y-4 sticky top-8">
-                     <a 
-                        href="#"
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-[#5865F2] rounded-lg hover:bg-[#4f5bda] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950 focus:ring-[#5865F2] transition-colors"
-                    >
-                        <DiscordIcon className="w-5 h-5 mr-2 -ml-1" />
-                        Entrar no Discord
-                    </a>
 
-                    <div className="pt-4 border-t border-gray-200 dark:border-zinc-800">
-                        <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">Comunicados</h3>
-                        <div className="space-y-1">
-                            {announcements.length > 0 ? announcements.map(announcement => (
-                                <AnnouncementItem key={announcement.id} post={announcement} />
-                            )) : (
-                                <p className="text-sm text-gray-400 dark:text-zinc-500 text-center py-4">Nenhum comunicado recente.</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </aside>
-        </div>
-        {isNewPostModalOpen && (
-            <NewPostModal
-                user={user}
-                onClose={() => setIsNewPostModalOpen(false)}
-                onCreatePost={(postData) => {
-                    onCreatePost(postData);
-                    setIsNewPostModalOpen(false);
-                }}
-            />
-        )}
+            <h3 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-300 mb-4">
+              Junte-se à nossa Comunidade
+            </h3>
+
+            <p className="text-zinc-400 max-w-md mx-auto mb-8 text-lg">
+              Tire dúvidas, compartilhe seus projetos e conecte-se com outros membros e instrutores em nosso servidor oficial no Discord.
+            </p>
+            
+            <div 
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold text-base rounded-lg shadow-lg shadow-white/10 transition-all duration-300 group-hover:bg-zinc-200 group-hover:scale-105 group-hover:shadow-xl group-hover:shadow-white/20"
+            >
+              <span>Entrar no Servidor</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      </div>
     </div>
   );
 };

@@ -79,7 +79,7 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
         if (!generatedImage) return;
         const link = document.createElement('a');
         link.href = generatedImage;
-        link.download = `dalle-creative-${Date.now()}.png`;
+        link.download = `creative-gemini-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -96,7 +96,6 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
         setSelectedHistoryId(null);
 
         try {
-            // TODO: Substituir pela API DALL-E 3 da OpenAI
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
             
             const parts: Part[] = [];
@@ -148,11 +147,11 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
     return (
         <div className="animate-fade-in">
             <div className="flex items-center mb-4">
-                <button onClick={onBack} className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-900 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-blue-500">
+                <button onClick={onBack} className="flex items-center px-3 py-2 text-sm font-medium text-zinc-300 bg-zinc-900 rounded-lg hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-white">
                     <ArrowLeftIcon className="w-5 h-5 mr-2" />
                     Voltar
                 </button>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white ml-4">Gerador de Imagem</h2>
+                <h2 className="text-2xl font-bold text-white ml-4">Gerador de Imagem</h2>
             </div>
 
             <div className="flex gap-8 mt-4" style={{ height: 'calc(100vh - 12rem)' }}>
@@ -171,18 +170,18 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
                             onClick={() => !imagePreview && fileInputRef.current?.click()}
-                            className="relative flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-lg text-center transition-colors aspect-square hover:border-gray-400 dark:hover:border-zinc-600 hover:bg-gray-50 dark:hover:bg-zinc-900"
+                            className="relative flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-lg text-center transition-colors aspect-square hover:border-white/50 hover:bg-zinc-900"
                         >
                              {!imagePreview ? (
                                 <div className="cursor-pointer p-12">
-                                    <UploadIcon className="w-12 h-12 text-gray-400 dark:text-zinc-500 mx-auto" />
-                                    <p className="mt-4 font-semibold text-gray-700 dark:text-zinc-300">Arraste uma imagem (opcional)</p>
-                                    <p className="text-sm text-gray-500 dark:text-zinc-400">ou clique para selecionar</p>
+                                    <UploadIcon className="w-12 h-12 text-zinc-500 mx-auto" />
+                                    <p className="mt-4 font-semibold text-zinc-300">Arraste uma imagem (opcional)</p>
+                                    <p className="text-sm text-zinc-400">ou clique para selecionar</p>
                                 </div>
                             ) : (
                                 <>
                                     <img src={imagePreview} alt="Pré-visualização" className="w-full h-full object-contain rounded-lg" />
-                                    <button onClick={(e) => {e.stopPropagation(); handleNew()}} className="absolute top-2 right-2 p-1.5 bg-black/70 text-white rounded-full hover:bg-black transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <button onClick={(e) => {e.stopPropagation(); handleNew()}} className="absolute top-2 right-2 p-1.5 bg-black/70 text-white rounded-full hover:bg-black transition-colors focus:outline-none focus:ring-2 focus:ring-white">
                                         <CloseIcon className="w-5 h-5" />
                                     </button>
                                 </>
@@ -194,21 +193,21 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
                             onChange={(e) => setPrompt(e.target.value)}
                             placeholder={imagePreview ? "Descreva a modificação desejada..." : "Descreva a imagem que você quer criar..."}
                             rows={3}
-                            className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition resize-none"
+                            className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-white transition resize-none"
                         />
                         <button
                             onClick={handleGenerate}
                             disabled={isLoading || !prompt.trim()}
-                            className="w-full flex items-center justify-center px-4 py-2.5 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-200 dark:disabled:bg-zinc-800 disabled:text-gray-400 dark:disabled:text-zinc-500 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-blue-500"
+                            className="w-full flex items-center justify-center px-4 py-2.5 font-semibold text-black bg-white rounded-lg hover:bg-zinc-200 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-white"
                         >
                             <SparklesIcon className="w-5 h-5 mr-2" />
                             {isLoading ? 'Gerando...' : (imagePreview ? 'Modificar Imagem' : 'Gerar Imagem')}
                         </button>
                     </div>
-                    <div className="relative group w-full aspect-square bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="relative group w-full aspect-square bg-black border border-zinc-800 rounded-xl flex items-center justify-center overflow-hidden">
                         {isLoading && (
-                            <div className="text-center text-gray-500 dark:text-zinc-400">
-                                <div className="w-10 h-10 border-4 border-gray-200 dark:border-zinc-700 border-t-gray-400 dark:border-t-zinc-400 rounded-full animate-spin mx-auto mb-4"></div>
+                            <div className="text-center text-zinc-400">
+                                <div className="w-10 h-10 border-4 border-zinc-700 border-t-zinc-400 rounded-full animate-spin mx-auto mb-4"></div>
                                 <p>Criando sua imagem...</p>
                             </div>
                         )}
@@ -218,7 +217,7 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
                                 <img src={generatedImage} alt="Imagem gerada por IA" className="w-full h-full object-contain animate-fade-in" />
                                 <button
                                     onClick={handleDownloadImage}
-                                    className="absolute top-3 right-3 p-2 bg-black/60 text-white rounded-full hover:bg-black transition-opacity opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-blue-500"
+                                    className="absolute top-3 right-3 p-2 bg-black/60 text-white rounded-full hover:bg-black transition-opacity opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-white"
                                     title="Baixar Imagem"
                                 >
                                     <DownloadIcon className="w-5 h-5" />
@@ -226,7 +225,7 @@ const ImageGenerationAgent: React.FC<AgentProps> = ({ onBack, history, addToHist
                             </>
                         )}
                         {!isLoading && !generatedImage && !error && (
-                            <div className="text-center text-gray-400 dark:text-zinc-500">
+                            <div className="text-center text-zinc-500">
                                 <SparklesIcon className="w-16 h-16 mx-auto mb-4" />
                                 <p>Sua imagem aparecerá aqui.</p>
                             </div>

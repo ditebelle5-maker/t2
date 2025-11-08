@@ -69,12 +69,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user, onSave }) =>
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up"
+        className="bg-white dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-zinc-800">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Editar Perfil</h3>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-white">
             <CloseIcon className="text-gray-600 dark:text-white" />
           </button>
         </div>
@@ -88,7 +88,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user, onSave }) =>
                 />
                 <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500"
+                    className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-white"
                     aria-label="Alterar foto de perfil"
                 >
                     <CameraIcon className="w-8 h-8 text-white" />
@@ -116,7 +116,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user, onSave }) =>
                 id="name" 
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full bg-gray-100 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-lg pl-10 pr-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition" 
+                className="w-full bg-gray-100 dark:bg-black border border-gray-300 dark:border-zinc-700 rounded-lg pl-10 pr-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-white transition" 
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user, onSave }) =>
                 id="email" 
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full bg-gray-100 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-lg pl-10 pr-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition" 
+                className="w-full bg-gray-100 dark:bg-black border border-gray-300 dark:border-zinc-700 rounded-lg pl-10 pr-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-white transition" 
               />
             </div>
           </div>
@@ -151,7 +151,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user, onSave }) =>
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Deixe em branco para não alterar"
-                className="w-full bg-gray-100 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-lg pl-10 pr-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition" 
+                className="w-full bg-gray-100 dark:bg-black border border-gray-300 dark:border-zinc-700 rounded-lg pl-10 pr-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-white transition" 
               />
             </div>
           </div>
@@ -159,13 +159,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user, onSave }) =>
         <div className="px-6 py-4 bg-gray-50 dark:bg-black/50 border-t border-gray-200 dark:border-zinc-800 flex justify-end space-x-3 rounded-b-2xl">
           <button 
             onClick={onClose} 
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-zinc-300 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-blue-500"
+            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-zinc-300 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-white"
           >
             Cancelar
           </button>
           <button 
             onClick={handleSaveChanges} 
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-blue-500"
+            className="px-4 py-2 text-sm font-semibold text-black bg-white rounded-lg hover:bg-zinc-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-black focus:ring-white"
           >
             Salvar Alterações
           </button>

@@ -1,6 +1,6 @@
 export type ViewType = 'agentes' | 'conteudo' | 'comunidade' | 'admin';
 
-export type AgentType = 'generator' | 'videoGenerator' | 'promptSpecialist' | 'imageReplicator';
+export type AgentType = 'generator' | 'promptSpecialist' | 'imageReplicator' | 'watermarkRemover';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -42,28 +42,6 @@ export interface ChatHistory {
   title: string;
   timestamp: string;
   messages: ChatMessage[];
-}
-
-export interface Comment {
-    id: number;
-    author: string;
-    avatar: string;
-    content: string;
-    time: string;
-}
-
-export interface Post {
-    id: number;
-    title: string;
-    author: string;
-    content: string;
-    imageUrls?: string[];
-    time: string;
-    avatar: string;
-    likes: number;
-    liked: boolean;
-    pinned?: boolean;
-    comments?: Comment[];
 }
 
 export interface SelectedCourseData {

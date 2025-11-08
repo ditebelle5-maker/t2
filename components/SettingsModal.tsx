@@ -22,7 +22,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, setTheme 
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl animate-fade-in-up"
+        className="bg-white dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl animate-fade-in-up"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-zinc-800">
@@ -40,7 +40,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, setTheme 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <button 
                         onClick={() => setLocalTheme('light')}
-                        className={`relative flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950 focus:ring-blue-500 ${
+                        className={`relative flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500 ${
                             localTheme === 'light' 
                             ? 'border-blue-500' 
                             : 'bg-white border-gray-300 hover:border-gray-400'
@@ -56,10 +56,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, setTheme 
                     </button>
                     <button 
                         onClick={() => setLocalTheme('dark')}
-                        className={`relative flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950 focus:ring-blue-500 ${
+                        className={`relative flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500 bg-black ${
                             localTheme === 'dark' 
                             ? 'border-blue-500' 
-                            : 'bg-black border-zinc-800 hover:border-zinc-500'
+                            : 'border-zinc-800 hover:border-zinc-500'
                         }`}
                     >
                         {localTheme === 'dark' && (
@@ -72,7 +72,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, setTheme 
                     </button>
                     <button 
                         onClick={() => setLocalTheme('system')}
-                        className={`relative flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950 focus:ring-blue-500 ${
+                        className={`relative flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500 ${
                             localTheme === 'system' 
                             ? 'border-blue-500' 
                             : 'bg-white dark:bg-black border-gray-300 dark:border-zinc-800 hover:border-gray-400 dark:hover:border-zinc-500'

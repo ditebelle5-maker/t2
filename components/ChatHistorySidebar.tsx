@@ -1,68 +1,60 @@
 import React from 'react';
 import type { ChatHistory } from '../types';
-import { TrashIcon, PlusCircleIcon } from './icons';
+import { TrashIcon, PlusIcon } from './icons';
 
 interface Props {
   histories: ChatHistory[];
   onSelect: (id: number) => void;
   onDelete: (id: number) => void;
-  onClear: () => void;
+  onClear: () => void; // Kept in props for API compatibility, but UI element is removed.
   onNew: () => void;
   selectedId: number | null;
 }
 
-const ChatHistorySidebar: React.FC<Props> = ({ histories, onSelect, onDelete, onClear, onNew, selectedId }) => {
+const ChatHistorySidebar: React.FC<Props> = ({ histories, onSelect, onDelete, onNew, selectedId }) => {
   return (
-    <div className="w-56 shrink-0 bg-white/50 dark:bg-black/50 backdrop-blur-md border border-gray-200 dark:border-zinc-800 rounded-xl flex flex-col">
-      <div className="p-4 border-b border-gray-200 dark:border-zinc-800 flex justify-between items-center shrink-0">
-        <h3 className="font-bold text-gray-900 dark:text-white text-lg">Conversas</h3>
+    <div className="flex flex-col h-full bg-transparent">
+      <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-zinc-800">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Conversas</h2>
         <button 
-          onClick={onNew} 
-          title="Nova Conversa"
-          className="p-1.5 text-gray-500 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-blue-500"
+            onClick={onNew} 
+            title="Nova Conversa"
+            className="p-2 rounded-full text-gray-500 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-800 dark:hover:text-white transition-colors"
         >
-          <PlusCircleIcon className="w-6 h-6"/>
+          <PlusIcon className="w-5 h-5" />
         </button>
       </div>
-      <div className="flex-grow overflow-y-auto">
+      <div className="flex-1 overflow-y-auto p-2">
         {histories.length === 0 ? (
           <div className="flex items-center justify-center h-full text-center text-gray-500 dark:text-zinc-500 px-4">
-              <p className="text-sm">Nenhuma conversa no histórico ainda.</p>
+            <p className="text-sm">Nenhuma conversa no histórico ainda.</p>
           </div>
         ) : (
-          <ul className="p-2 space-y-1">
+          <ul className="space-y-1">
             {histories.map(item => (
-              <li 
-                key={item.id} 
-                onClick={() => onSelect(item.id)}
-                className={`group p-3 rounded-lg cursor-pointer transition-colors ${selectedId === item.id ? 'bg-gray-100 dark:bg-zinc-900' : 'hover:bg-gray-100 dark:hover:bg-zinc-900'}`}
-              >
-                <div className="flex justify-between items-start">
-                    <p className="text-sm text-gray-800 dark:text-zinc-200 font-medium truncate pr-2 flex-1">{item.title}</p>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}
-                      className="p-1 text-gray-400 dark:text-zinc-500 hover:text-red-500 hover:bg-gray-200 dark:hover:bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
-                      title="Deletar conversa"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                </div>
-                <span className="text-xs text-gray-500 dark:text-zinc-500">{new Date(item.timestamp).toLocaleString()}</span>
+              <li key={item.id}>
+                <button
+                  onClick={() => onSelect(item.id)}
+                  className={`group w-full text-left flex justify-between items-center p-2 rounded-md transition-colors text-sm ${
+                    selectedId === item.id 
+                      ? 'bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-white font-medium' 
+                      : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                  }`}
+                >
+                  <span className="truncate pr-2">{item.title}</span>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}
+                    className="p-1 text-gray-400 dark:text-zinc-500 hover:text-red-500 rounded-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                    title="Deletar conversa"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
-      {histories.length > 0 && (
-        <div className="p-3 border-t border-gray-200 dark:border-zinc-800 shrink-0">
-          <button 
-            onClick={onClear} 
-            className="w-full text-center px-3 py-2 text-sm font-medium text-red-600 dark:text-red-500 bg-red-100 dark:bg-red-900/20 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black focus:ring-red-500"
-          >
-            Limpar Histórico
-          </button>
-        </div>
-      )}
     </div>
   );
 };
