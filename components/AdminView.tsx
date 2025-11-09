@@ -4,14 +4,14 @@ import { TrashIcon, CommunityIcon } from './icons';
 
 interface AdminViewProps {
   users: User[];
-  onBanUser: (email: string) => void;
+  onBanUser: (userId: string) => void;
   currentUser: User;
 }
 
-const AdminView: React.FC<AdminViewProps> = ({ 
-    users, 
-    onBanUser, 
-    currentUser 
+const AdminView: React.FC<AdminViewProps> = ({
+    users,
+    onBanUser,
+    currentUser
 }) => {
 
   return (
@@ -37,15 +37,15 @@ const AdminView: React.FC<AdminViewProps> = ({
                 </div>
                 <div>
                     {users.map(user => (
-                        <div key={user.email} className="grid grid-cols-10 gap-4 px-6 py-4 items-center text-sm text-zinc-300 border-b border-zinc-800 last:border-b-0 even:bg-zinc-800/50">
+                        <div key={user.id || user.email} className="grid grid-cols-10 gap-4 px-6 py-4 items-center text-sm text-zinc-300 border-b border-zinc-800 last:border-b-0 even:bg-zinc-800/50">
                             <div className="truncate col-span-4">
                                 <span className="truncate">{user.name}</span>
                             </div>
                             <div className="truncate col-span-4">{user.email}</div>
                             <div className="flex justify-end col-span-2">
                                 <button
-                                    onClick={() => onBanUser(user.email)}
-                                    disabled={currentUser.email === user.email}
+                                    onClick={() => user.id && onBanUser(user.id)}
+                                    disabled={currentUser.id === user.id || !user.id}
                                     className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-red-300 bg-red-900/40 rounded-md hover:bg-red-900/60 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <TrashIcon className="w-4 h-4" />

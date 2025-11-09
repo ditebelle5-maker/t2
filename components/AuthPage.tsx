@@ -3,8 +3,8 @@ import type { User } from '../types';
 import { ArrowLeftIcon, EmailIcon, LockClosedIcon, UserIcon } from './icons';
 
 interface AuthPageProps {
-  onLogin: (email: string, pass: string) => User | null;
-  onRegister: (name: string, email: string, pass: string) => User | null;
+  onLogin: (email: string, pass: string) => Promise<User | null>;
+  onRegister: (name: string, email: string, pass: string) => Promise<User | null>;
   onBack: () => void;
 }
 
@@ -14,29 +14,41 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, onRegister, onBack }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
-        if (isLoginView) {
-            if (!email || !password) {
-                setError('Por favor, preencha todos os campos.');
-                return;
+        try {
+            if (isLoginView) {
+                if (!email || !password) {
+                    setError('Por favor, preencha todos os campos.');
+                    return;
+                }
+                const user = await onLogin(email, password);
+                if (!user) {
+                    setError('Email ou senha inválidos.');
+                }
+            } else {
+                if (!name || !email || !password) {
+                    setError('Por favor, preencha todos os campos.');
+                    return;
+                }
+                if (password.length < 6) {
+                    setError('A senha deve ter no mínimo 6 caracteres.');
+                    return;
+                }
+                const user = await onRegister(name, email, password);
+                if (!user) {
+                    setError('Erro ao criar conta. Verifique se o email já está em uso.');
+                }
             }
-            const user = onLogin(email, password);
-            if (!user) {
-                setError('Email ou senha inválidos.');
-            }
-        } else {
-            if (!name || !email || !password) {
-                setError('Por favor, preencha todos os campos.');
-                return;
-            }
-            const user = onRegister(name, email, password);
-            if (!user) {
-                setError('Este email já está em uso.');
-            }
+        } catch (err) {
+            setError('Ocorreu um erro. Tente novamente.');
+        } finally {
+            setLoading(false);
         }
     };
     
@@ -126,9 +138,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, onRegister, onBack }) => {
                     </div>
                      <button
                         type="submit"
-                        className="w-full px-8 py-3 bg-white text-black font-semibold rounded-lg shadow-lg hover:shadow-white/20 transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
+                        disabled={loading}
+                        className="w-full px-8 py-3 bg-white text-black font-semibold rounded-lg shadow-lg hover:shadow-white/20 transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                        {isLoginView ? 'Entrar' : 'Cadastrar'}
+                        {loading ? 'Aguarde...' : (isLoginView ? 'Entrar' : 'Cadastrar')}
                     </button>
                 </form>
 

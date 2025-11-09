@@ -8,6 +8,7 @@ import VideoPlayerView from './components/VideoPlayerView';
 import AdminView from './components/AdminView';
 import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
+import { supabase } from './lib/supabase';
 import type { ViewType, Video, User, HistoryItem, AgentType, ChatHistory, SelectedCourseData } from './types';
 
 const initialCourses: Record<string, Video[]> = {
@@ -50,7 +51,98 @@ const App: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [chatHistories, setChatHistories] = useState<ChatHistory[]>([]);
   const [courses, setCourses] = useState<Record<string, Video[]>>(initialCourses);
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkUser();
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        await loadUserProfile(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setAppState('landing');
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadAllUsers();
+    }
+  }, [user]);
+
+  const checkUser = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await loadUserProfile(session.user.id);
+      }
+    } catch (error) {
+      console.error('Erro ao verificar sessão:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles_with_email')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        const userProfile: User = {
+          name: data.name,
+          email: data.email || '',
+          avatar: data.avatar,
+          role: data.role,
+          online: data.online,
+          warned: data.warned,
+          canPost: data.can_post
+        };
+        setUser(userProfile);
+        setAppState('dashboard');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar perfil:', error);
+    }
+  };
+
+  const loadAllUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles_with_email')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        const usersList: User[] = data.map(profile => ({
+          id: profile.id,
+          name: profile.name,
+          email: profile.email || '',
+          avatar: profile.avatar,
+          role: profile.role,
+          online: profile.online,
+          warned: profile.warned,
+          canPost: profile.can_post
+        }));
+        setUsers(usersList);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar usuários:', error);
+    }
+  };
 
   const handleVideoSelect = (video: Video, playlist: Video[], courseTitle: string) => {
     setSelectedCourseData({ video, playlist, courseTitle });
@@ -61,39 +153,69 @@ const App: React.FC = () => {
     setSelectedCourseData(null); // Reset video player when changing main view
   };
 
-  const handleLogin = (email: string, pass: string): User | null => {
-    const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    // In a real app, you'd check a hashed password. For this demo, any password will do if the user exists.
-    if (foundUser) {
-        setUser(foundUser);
-        setAppState('dashboard');
-        return foundUser;
-    }
-    return null;
-  };
+  const handleLogin = async (email: string, password: string): Promise<User | null> => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-  const handleRegister = (name: string, email: string, pass: string): User | null => {
-      if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-          return null; // User already exists
+      if (error) {
+        console.error('Erro no login:', error.message);
+        return null;
       }
-      const newUser: User = {
-          name,
-          email,
-          avatar: `https://i.pravatar.cc/150?u=${email}`, // Simple unique avatar
-          role: 'user',
-          canPost: true,
-          online: true,
-      };
-      setUsers(prev => [...prev, newUser]);
-      setUser(newUser);
-      setAppState('dashboard');
-      return newUser;
+
+      if (data.user) {
+        await loadUserProfile(data.user.id);
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Erro no login:', error);
+      return null;
+    }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setAppState('landing');
-    setActiveView('conteudo'); // Reset to default view
+  const handleRegister = async (name: string, email: string, password: string): Promise<User | null> => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            avatar: `https://i.pravatar.cc/150?u=${email}`
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Erro no cadastro:', error.message);
+        return null;
+      }
+
+      if (data.user) {
+        await loadUserProfile(data.user.id);
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Erro no cadastro:', error);
+      return null;
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setAppState('landing');
+      setActiveView('conteudo');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
   };
 
   const addToHistory = (item: Omit<HistoryItem, 'id' | 'timestamp'>) => {
@@ -196,21 +318,59 @@ const App: React.FC = () => {
   };
 
   // User Management
-  const toggleUserWarning = (email: string) => {
-    setUsers(prev => prev.map(u => u.email === email ? { ...u, warned: !u.warned } : u));
-  };
-  
-  const toggleUserCanPost = (email: string) => {
-    setUsers(prev => prev.map(u => u.email === email ? { ...u, canPost: !u.canPost } : u));
+  const toggleUserWarning = async (userId: string) => {
+    try {
+      const targetUser = users.find(u => u.email === userId);
+      if (!targetUser) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ warned: !targetUser.warned })
+        .eq('id', userId);
+
+      if (error) throw error;
+      await loadAllUsers();
+    } catch (error) {
+      console.error('Erro ao atualizar warning:', error);
+    }
   };
 
-  const banUser = (email: string) => {
-    if (user?.email === email) {
-      alert("Você não pode banir a si mesmo.");
-      return;
+  const toggleUserCanPost = async (userId: string) => {
+    try {
+      const targetUser = users.find(u => u.email === userId);
+      if (!targetUser) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ can_post: !targetUser.canPost })
+        .eq('id', userId);
+
+      if (error) throw error;
+      await loadAllUsers();
+    } catch (error) {
+      console.error('Erro ao atualizar permissão:', error);
     }
-    if (window.confirm(`Tem certeza que deseja banir o usuário ${email}? Esta ação é permanente.`)) {
-        setUsers(prev => prev.filter(u => u.email !== email));
+  };
+
+  const banUser = async (userId: string) => {
+    try {
+      const { data: { user: currentAuthUser } } = await supabase.auth.getUser();
+      if (currentAuthUser?.id === userId) {
+        alert("Você não pode banir a si mesmo.");
+        return;
+      }
+
+      if (window.confirm(`Tem certeza que deseja banir este usuário? Esta ação é permanente.`)) {
+        const { error } = await supabase
+          .from('profiles')
+          .delete()
+          .eq('id', userId);
+
+        if (error) throw error;
+        await loadAllUsers();
+      }
+    } catch (error) {
+      console.error('Erro ao banir usuário:', error);
     }
   };
 
@@ -302,6 +462,17 @@ const App: React.FC = () => {
           <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-900 p-6 lg:p-8">
             {renderDashboard()}
           </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-zinc-950">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-zinc-700 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-zinc-400">Carregando...</p>
         </div>
       </div>
     );

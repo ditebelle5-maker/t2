@@ -1,0 +1,39 @@
+========================================
+CREDENCIAIS DE TESTE - R4 ACADEMY
+========================================
+
+ADMIN (Administrador):
+- Email: admin@email.com
+- Senha: admin123
+
+ADMIN 2 (Administrador):
+- Email: ana@email.com
+- Senha: senha123
+
+USUÁRIO COMUM:
+- Email: user@email.com
+- Senha: senha123
+
+========================================
+OBSERVAÇÕES:
+========================================
+
+1. Você também pode criar novas contas através do formulário de cadastro
+2. Novas contas serão criadas como usuários comuns (role: 'user')
+3. Apenas administradores podem acessar o painel de controle
+4. A autenticação está integrada com Supabase
+5. As sessões são persistidas automaticamente
+
+========================================
+FUNCIONALIDADES IMPLEMENTADAS:
+========================================
+
+✓ Autenticação com Supabase (Login/Cadastro)
+✓ Gerenciamento de sessão automático
+✓ Perfis de usuário com roles (admin/user)
+✓ Painel administrativo para banir usuários
+✓ Row Level Security (RLS) configurado
+✓ Persistência de dados no banco
+✓ Logout funcional
+
+========================================
